@@ -65,8 +65,11 @@ class Heading(val content: String, val level: Int = 1) : Tag {
 class PageNumber(val content: String) : Tag {
     val text get() = content.trim().split("|").last().trimEnd('}')
 
-    override fun html(): String {
+    fun html2(): String {
         return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>"
+    }
+    override fun html(): String {
+        return "<span>$text</span>"
     }
 }
 
@@ -110,7 +113,13 @@ class Paragraph(val content: String) : Tag {
                 } else {
                     var revisedLine = line
                     // println("Line: $revisedLine")
-                    listOf("{{innfelt initial ppoem|", "{{page|", "{{Sperret|").forEach { searchFor ->
+                    listOf(
+                        "{{innfelt initial ppoem|",
+                        "{{page|",
+                        "{{Sperret|",
+                        "{{nodent|{{innfelt initial|",
+                        "{{Blank linje"
+                    ).forEach { searchFor ->
                         var tries = 5
                         while (--tries > 0 && revisedLine.contains(searchFor)) {
                             revisedLine.split(searchFor, limit = 2).last().split("}}").first().let { c ->
@@ -123,6 +132,10 @@ class Paragraph(val content: String) : Tag {
 
                                     "{{Sperret|" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<em>$c</em>")
+                                    }
+
+                                    "{{Blank linje" -> {
+                                        revisedLine = revisedLine.replace(oldValue, "<hr/>")
                                     }
 
                                     else -> {
@@ -153,7 +166,7 @@ class Paragraph(val content: String) : Tag {
 
 
 class Chapter(val content: String) {
-    val title: String get() = tags().firstNotNullOf { it as? Heading }.content
+    val title: String get() = tags().mapNotNull { it as? Heading }.joinToString(" - ") { it.text }
 
     fun inputStream(): InputStream = html().byteInputStream()
 
@@ -166,11 +179,12 @@ class Chapter(val content: String) {
         it.html()
     }.joinToString("\n\n").let {
         """
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" dir="ltr"
+lang="no">
 <head>
-  <title>Title of document</title>
+  <title>$title</title>
 </head>
 <body>
 ${it}
@@ -228,7 +242,7 @@ ${it}
 
 fun main() = runBlocking {
     val chapters = listOf(
-        Chapter.create(1, 6),
+        // Chapter.create(1, 6),
         Chapter.create(7, 9),
         Chapter.create(11, 27),
         Chapter.create(28, 51),
@@ -277,10 +291,12 @@ fun main() = runBlocking {
             publishers.add("H. ASCHEHOUG & CO. (W. NYGAARD)")
         }
 
+
         chapters.forEachIndexed { index, ch ->
             val chapterResource = Resource(ch.inputStream(), "chapter_$index.xhtml")
 
             this.addSection(ch.title, chapterResource)
+            spine.addResource(chapterResource)
         }
     }
 
