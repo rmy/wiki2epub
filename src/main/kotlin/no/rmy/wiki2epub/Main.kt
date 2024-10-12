@@ -4,12 +4,14 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.*
+import java.io.File
 
 
 class Page(val page: Int, val source: String?) {
-    val content = cleanedContent().lines().filter {
+    val content get() = cleanedContent().lines().filter {
         it.trim().let {
             !it.startsWith("{{ppoem")
                     && !it.equals("}}")
@@ -21,9 +23,13 @@ class Page(val page: Int, val source: String?) {
         json.jsonObject.get("source")?.jsonPrimitive?.contentOrNull
     )
 
-    override fun toString(): String = "{{page|$page}}\n$content"
+    private val oldPageString: String = "<span epub:type=\"pagebreak\" id=\"page$page\">$page</span>"
+    private val pageString: String get() = "{{page|$page}}"
 
-    fun cleanedContent(): String {
+    override fun toString(): String = "$pageString\n$content"
+
+
+    private fun cleanedContent(): String {
         return source?.let { text ->
             text.split("</noinclude>").filter {
                 !it.startsWith("<noinclude>")
@@ -39,17 +45,17 @@ interface Tag {
     fun html(): String
 }
 
-class Heading(val content: String, val level: Int = 1): Tag {
+class Heading(val content: String, val level: Int = 1) : Tag {
     val text get() = content.trim().split("|").last().trimEnd('}')
 
     override fun html(): String = "<h$level>$text</h$level>"
 }
 
-class PageNumber(val content: String): Tag {
+class PageNumber(val content: String) : Tag {
     val text get() = content.trim().split("|").last().trimEnd('}')
 
     override fun html(): String {
-        return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>\n"
+        return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>"
     }
 }
 
@@ -66,21 +72,30 @@ class Paragraph(val content: String) : Tag {
 
             val lines = content.trim().lines().toMutableList()
             val p = mutableListOf<String>()
-            while(lines.isNotEmpty()) {
+            while (lines.isNotEmpty()) {
                 val line = lines.first()
                 lines.removeFirst()
                 var tag: Tag? = if (line.startsWith("{{midtstilt|{{stor")) {
                     Heading(line, 1)
                 } else if (line.startsWith("{{midtstilt|")) {
                     Heading(line, 2)
-                } else if (line.startsWith("{{page|")) {
-                    PageNumber(line)
+                    //} else if (line.startsWith("{{page|")) {
+                    //    PageNumber(line)
                 } else {
                     var revisedLine = line
-                    listOf("{{innfelt initial ppoem|").mapNotNull { searchFor ->
-                        if(revisedLine.contains(searchFor)) {
-                            line.split(searchFor).last().split("}}").first().let { c ->
-                                revisedLine = revisedLine.replace("$searchFor$c}}", c)
+                    listOf("{{innfelt initial ppoem|", "{{page|").forEach { searchFor ->
+                        if (revisedLine.contains(searchFor)) {
+                            line.split(searchFor, limit = 2).last().split("}}").first().let { c ->
+                                val oldValue = "$searchFor$c}}"
+                                when (searchFor) {
+                                    "{{page|" -> {
+                                        //revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
+                                    }
+
+                                    else -> {
+                                        revisedLine = revisedLine.replace("$searchFor$c}}", c)
+                                    }
+                                }
                             }
                         }
                     }
@@ -88,7 +103,7 @@ class Paragraph(val content: String) : Tag {
                     null
                 }
                 if (tag != null) {
-                    if(p.isNotEmpty()) {
+                    if (p.isNotEmpty()) {
                         Paragraph(p.joinToString("\n")).let {
                             queue.add(it)
                         }
@@ -97,7 +112,7 @@ class Paragraph(val content: String) : Tag {
                     queue.add(tag)
                 }
             }
-            if(p.isNotEmpty()) {
+            if (p.isNotEmpty()) {
                 Paragraph(p.joinToString("\n")).let {
                     queue.add(it)
                 }
@@ -114,8 +129,6 @@ class Chapter(val content: String) {
             Paragraph.create(it)
         }.flatten()
 
-
-
     fun html(): String = tags().map {
         it.html()
     }.joinToString("\n\n")
@@ -130,16 +143,32 @@ class Chapter(val content: String) {
 
             val c = (firstPage until lastPage).map { page ->
                 val pageUrl = "https://api.wikimedia.org/core/v1/wikisource/no/page/Side%3AIliaden.djvu%2F$page"
-                val result = httpClient.request {
-                    url(pageUrl)
+                val filename = "iliaden_$page.wikimedia"
+
+                val jsonString = if(File(filename).exists()) {
+                    File(filename).readText()
+                }
+                else {
+                    val result = httpClient.request {
+                        url(pageUrl)
+                    }
+                    delay(500)
+
+                    val string = result.bodyAsText()
+                    val hasSource = (jsonDecoder.parseToJsonElement(string).jsonObject.get("source") != null)
+                    if(hasSource) {
+                        File(filename).writeText(string)
+                    }
+                    string
                 }
 
-                val string = result.bodyAsText()
-                val json = jsonDecoder.parseToJsonElement(string)
+                val json = jsonDecoder.parseToJsonElement(jsonString)
                 Page(page, json)
+
             }.joinToString("\n") {
                 it.toString()
             }
+
 
             return Chapter(c)
         }
@@ -148,7 +177,24 @@ class Chapter(val content: String) {
 
 
 fun main() = runBlocking {
-    val chapter = Chapter.create(341, 352)
-    println(chapter.html())
+    /*
+    val chapters = listOf(
+        Chapter.create(11, 27),
+        Chapter.create(28, 51),
+        Chapter.create(52, 64),
+        Chapter.create(65, 79),
+        Chapter.create(80, 104),
+        Chapter.create(105, 119),
+        Chapter.create(120, 132),
+        Chapter.create(133, 148),
+        Chapter.create(341, 352),
+    )
+
+    val ch = chapters.drop(2).first()
+    */
+    val ch = Chapter.create(28, 51)
+
+    //println(ch.html())
+    println(ch.content)
 }
 
