@@ -172,7 +172,7 @@ class Paragraph(val content: String) : Tag {
 }
 
 
-class Chapter(val content: String) {
+class Chapter(val content: String, style: Boolean) {
     val title: String get() = tags().mapNotNull { it as? Heading }.joinToString(" - ") { it.text }
 
     fun inputStream(): InputStream = html().byteInputStream()
@@ -192,6 +192,23 @@ class Chapter(val content: String) {
 lang="no">
 <head>
   <title>$title</title>
+  ${getStyle(style)}
+</head>
+<body>
+${it}
+</body>
+</html>        
+        """.trimIndent()
+    }
+
+
+    companion object {
+        fun getStyle(s: Boolean) = if(s)
+            style
+        else
+            ""
+
+        val style = """
   <style>
   h1 {
     text-align: center;
@@ -234,17 +251,11 @@ lang="no">
   
   
   </style>
-</head>
-<body>
-${it}
-</body>
-</html>        
+            
         """.trimIndent()
-    }
 
 
-    companion object {
-        suspend fun create(firstPage: Int, lastPage: Int): Chapter {
+        suspend fun create(firstPage: Int, lastPage: Int, style: Boolean = false): Chapter {
             val httpClient = HttpClient(CIO)
             val jsonDecoder = Json {
                 isLenient = true
@@ -282,7 +293,7 @@ ${it}
             }
 
 
-            return Chapter(c)
+            return Chapter(c, style)
         }
 
     }
@@ -291,9 +302,9 @@ ${it}
 
 fun main() = runBlocking {
     val chapters = listOf(
-        // Chapter.create(1, 6),
-        // Chapter.create(7, 9),
-        // Chapter.create(11, 27),
+        Chapter.create(1, 6, false),
+        Chapter.create(7, 9, false),
+        Chapter.create(11, 27),
         Chapter.create(28, 51),
         Chapter.create(52, 64),
         Chapter.create(65, 79),
