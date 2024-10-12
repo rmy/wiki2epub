@@ -11,13 +11,10 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.selects.whileSelect
 import kotlinx.serialization.json.*
-import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.sql.Date
 
 
 class Page(val page: Int, val source: String?) {
@@ -65,17 +62,23 @@ class Heading(val content: String, val level: Int = 1) : Tag {
 class PageNumber(val content: String) : Tag {
     val text get() = content.trim().split("|").last().trimEnd('}')
 
+    fun html3(): String =
+        "<span title=\"[Pg $text]\" id=\"pgepubid00259\"><a id=\"Page_$text\" title=\"[Pg $text]\"></a></span>"
+
     fun html2(): String {
         return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>"
     }
-    override fun html(): String {
+
+    fun html4(): String {
         return "<span>$text</span>"
     }
+
+    override fun html(): String = html3()
 }
 
 
 class Paragraph(val content: String) : Tag {
-    override fun html(): String = content.trim().lines().joinToString(" <br/>\n").let {
+    override fun html(): String = content.trim().lines().joinToString("\n").let {
         "<p>\n${it.trim().replace("</span> <br/>", "</span>")}\n</p>"
     }
 
@@ -87,11 +90,15 @@ class Paragraph(val content: String) : Tag {
             if (p.size == 1 && isPageNumber(p.first())) {
                 PageNumber(p.first())
             } else {
-                p.map {
+                p.mapIndexed { index, it ->
                     if (isPageNumber(it)) {
                         PageNumber(it.trim()).html()
                     } else {
-                        it
+                        if (index == 0) {
+                            "<div class=\"first\">$it</div>"
+                        } else {
+                            "<div>$it</div>"
+                        }
                     }
                 }.let {
                     Paragraph(it.joinToString("\n"))
@@ -185,6 +192,48 @@ class Chapter(val content: String) {
 lang="no">
 <head>
   <title>$title</title>
+  <style>
+  h1 {
+    text-align: center;
+    font-size: 1em;
+  }
+  
+  h2 {
+    text-align: center;
+    font-size: 1em;
+  }
+
+  em {
+    letter-spacing: 0.2em;
+    font-style: normal;
+  }
+
+  p {
+    padding: 2em;
+    margin: 0;
+  }
+
+/*
+  div.first:first-letter {
+      font-size: 2.5em;
+      vertical-align: text-top;
+  }
+ */
+  
+  .first {
+    text-indent; 2em
+  }
+        
+
+  
+  div {
+    margin-left: 3em;
+    text-indent: -3em;
+    padding: 0;
+  }
+  
+  
+  </style>
 </head>
 <body>
 ${it}
@@ -243,8 +292,8 @@ ${it}
 fun main() = runBlocking {
     val chapters = listOf(
         // Chapter.create(1, 6),
-        Chapter.create(7, 9),
-        Chapter.create(11, 27),
+        // Chapter.create(7, 9),
+        // Chapter.create(11, 27),
         Chapter.create(28, 51),
         Chapter.create(52, 64),
         Chapter.create(65, 79),
@@ -270,7 +319,7 @@ fun main() = runBlocking {
         Chapter.create(422, 443),
     )
 
-    val path  = "files"
+    val path = "files"
     File(path).mkdirs()
 
     chapters.forEachIndexed { index, ch ->
