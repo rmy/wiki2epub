@@ -145,7 +145,7 @@ class Chapter(val content: String) {
                 val pageUrl = "https://api.wikimedia.org/core/v1/wikisource/no/page/Side%3AIliaden.djvu%2F$page"
 
                 val path = "files"
-                File("path").mkdirs()
+                File(path).mkdirs()
                 val filename = "$path/iliaden_$page.wikimedia"
 
                 if(File(filename).exists()) {
