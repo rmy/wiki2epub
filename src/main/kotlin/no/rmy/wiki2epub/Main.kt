@@ -6,6 +6,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.selects.whileSelect
 import kotlinx.serialization.json.*
 import java.io.File
 
@@ -83,13 +84,19 @@ class Paragraph(val content: String) : Tag {
                     //    PageNumber(line)
                 } else {
                     var revisedLine = line
-                    listOf("{{innfelt initial ppoem|", "{{page|").forEach { searchFor ->
-                        if (revisedLine.contains(searchFor)) {
-                            line.split(searchFor, limit = 2).last().split("}}").first().let { c ->
+                    // println("Line: $revisedLine")
+                    listOf("{{innfelt initial ppoem|", "{{page|", "{{Sperret|").forEach { searchFor ->
+                        var tries = 5
+                        while (--tries > 0 && revisedLine.contains(searchFor)) {
+                            revisedLine.split(searchFor, limit = 2).last().split("}}").first().let { c ->
                                 val oldValue = "$searchFor$c}}"
+                                // println(oldValue)
                                 when (searchFor) {
                                     "{{page|" -> {
-                                        //revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
+                                        revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
+                                    }
+                                    "{{Sperret|" -> {
+                                        revisedLine = revisedLine.replace(oldValue, "<em>$c</em>")
                                     }
 
                                     else -> {
@@ -125,7 +132,7 @@ class Paragraph(val content: String) : Tag {
 
 class Chapter(val content: String) {
     fun tags(): List<Tag> =
-        content.split("{{gap|1em}}").map {
+        content.split(Regex("\\{\\{gap\\|1em\\}\\}|\\{\\{Innrykk\\|1\\}\\}")).map {
             Paragraph.create(it)
         }.flatten()
 
@@ -166,7 +173,6 @@ class Chapter(val content: String) {
                         Page(page, source)
                     }
                     else {
-                        println(string)
                         null
                     }
                 }
@@ -194,10 +200,12 @@ fun main() = runBlocking {
         Chapter.create(341, 352),
     )
 
-    val ch = chapters.drop(2).first()
-    //val ch = Chapter.create(28, 51)
+    chapters.forEach { ch ->
+        println("-----")
+        println(ch.html())
+    }
+    // val ch = chapters.drop(0).first()
 
-    //println(ch.html())
-    println(ch.content)
+    //println(ch.content)
 }
 
