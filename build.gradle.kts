@@ -10,6 +10,8 @@ repositories {
 }
 
 dependencies {
+    implementation("io.documentnode:epub4j-core:4.2.1")
+    implementation("org.sweble.wikitext:swc-parser-lazy:3.1.9")
     testImplementation(kotlin("test"))
 }
 
