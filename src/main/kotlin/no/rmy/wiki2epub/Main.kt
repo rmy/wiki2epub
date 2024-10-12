@@ -141,12 +141,14 @@ class Chapter(val content: String) {
                 isLenient = true
             }
 
-            val c = (firstPage until lastPage).map { page ->
+            val c = (firstPage until lastPage).mapNotNull { page ->
                 val pageUrl = "https://api.wikimedia.org/core/v1/wikisource/no/page/Side%3AIliaden.djvu%2F$page"
                 val filename = "iliaden_$page.wikimedia"
 
-                val jsonString = if(File(filename).exists()) {
-                    File(filename).readText()
+                if(File(filename).exists()) {
+                    File(filename).readText().let {
+                        Page(page, it)
+                    }
                 }
                 else {
                     val result = httpClient.request {
@@ -155,16 +157,16 @@ class Chapter(val content: String) {
                     delay(500)
 
                     val string = result.bodyAsText()
-                    val hasSource = (jsonDecoder.parseToJsonElement(string).jsonObject.get("source") != null)
-                    if(hasSource) {
-                        File(filename).writeText(string)
+                    val source = jsonDecoder.parseToJsonElement(string).jsonObject.get("source")?.jsonPrimitive?.contentOrNull
+                    if(source != null) {
+                        File(filename).writeText(source)
+                        Page(page, source)
                     }
-                    string
+                    else {
+                        println(string)
+                        null
+                    }
                 }
-
-                val json = jsonDecoder.parseToJsonElement(jsonString)
-                Page(page, json)
-
             }.joinToString("\n") {
                 it.toString()
             }
