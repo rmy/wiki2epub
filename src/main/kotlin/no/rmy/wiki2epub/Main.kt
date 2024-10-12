@@ -12,12 +12,13 @@ import java.io.File
 
 
 class Page(val page: Int, val source: String?) {
-    val content get() = cleanedContent().lines().filter {
-        it.trim().let {
-            !it.startsWith("{{ppoem")
-                    && !it.equals("}}")
-        }
-    }.joinToString("\n")
+    val content
+        get() = cleanedContent().lines().filter {
+            it.trim().let {
+                !it.startsWith("{{ppoem")
+                        && !it.equals("}}")
+            }
+        }.joinToString("\n")
 
     constructor(page: Int, json: JsonElement) : this(
         page,
@@ -63,11 +64,28 @@ class PageNumber(val content: String) : Tag {
 
 class Paragraph(val content: String) : Tag {
     override fun html(): String = content.trim().lines().joinToString(" <br/>\n").let {
-        "<p>\n${it.trim()}\n</p>"
+        "<p>\n${it.trim().replace("</span> <br/>", "</span>")}\n</p>"
     }
 
 
     companion object {
+        fun isPageNumber(s: String): Boolean = s.startsWith("{{page|")
+
+        fun toTag(p: List<String>): Tag = // Paragraph(p.joinToString("\n"))
+            if (p.size == 1 && isPageNumber(p.first())) {
+                PageNumber(p.first())
+            } else {
+                p.map {
+                    if (isPageNumber(it)) {
+                        PageNumber(it.trim()).html()
+                    } else {
+                        it
+                    }
+                }.let {
+                    Paragraph(it.joinToString("\n"))
+                }
+            }
+
         fun create(content: String): List<Tag> {
             val queue = mutableListOf<Tag>()
 
@@ -80,8 +98,6 @@ class Paragraph(val content: String) : Tag {
                     Heading(line, 1)
                 } else if (line.startsWith("{{midtstilt|")) {
                     Heading(line, 2)
-                    //} else if (line.startsWith("{{page|")) {
-                    //    PageNumber(line)
                 } else {
                     var revisedLine = line
                     // println("Line: $revisedLine")
@@ -93,8 +109,9 @@ class Paragraph(val content: String) : Tag {
                                 // println(oldValue)
                                 when (searchFor) {
                                     "{{page|" -> {
-                                        revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
+                                        //revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
                                     }
+
                                     "{{Sperret|" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<em>$c</em>")
                                     }
@@ -111,18 +128,14 @@ class Paragraph(val content: String) : Tag {
                 }
                 if (tag != null) {
                     if (p.isNotEmpty()) {
-                        Paragraph(p.joinToString("\n")).let {
-                            queue.add(it)
-                        }
+                        queue.add(toTag(p))
                         p.clear()
                     }
                     queue.add(tag)
                 }
             }
             if (p.isNotEmpty()) {
-                Paragraph(p.joinToString("\n")).let {
-                    queue.add(it)
-                }
+                queue.add(toTag(p))
             }
             return queue
         }
@@ -155,24 +168,23 @@ class Chapter(val content: String) {
                 File(path).mkdirs()
                 val filename = "$path/iliaden_$page.wikimedia"
 
-                if(File(filename).exists()) {
+                if (File(filename).exists()) {
                     File(filename).readText().let {
                         Page(page, it)
                     }
-                }
-                else {
+                } else {
                     val result = httpClient.request {
                         url(pageUrl)
                     }
                     delay(500)
 
                     val string = result.bodyAsText()
-                    val source = jsonDecoder.parseToJsonElement(string).jsonObject.get("source")?.jsonPrimitive?.contentOrNull
-                    if(source != null) {
+                    val source =
+                        jsonDecoder.parseToJsonElement(string).jsonObject.get("source")?.jsonPrimitive?.contentOrNull
+                    if (source != null) {
                         File(filename).writeText(source)
                         Page(page, source)
-                    }
-                    else {
+                    } else {
                         null
                     }
                 }
