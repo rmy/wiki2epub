@@ -1,5 +1,10 @@
 package no.rmy.wiki2epub
 
+import com.sun.java.accessibility.util.Translator
+import io.documentnode.epub4j.domain.Author
+import io.documentnode.epub4j.domain.Book
+import io.documentnode.epub4j.domain.Resource
+import io.documentnode.epub4j.epub.EpubWriter
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -8,7 +13,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.selects.whileSelect
 import kotlinx.serialization.json.*
+import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.sql.Date
 
 
 class Page(val page: Int, val source: String?) {
@@ -144,6 +153,10 @@ class Paragraph(val content: String) : Tag {
 
 
 class Chapter(val content: String) {
+    val title: String get() = tags().firstNotNullOf { it as? Heading }.content
+
+    fun inputStream(): InputStream = html().byteInputStream()
+
     fun tags(): List<Tag> =
         content.split(Regex("\\{\\{gap\\|1em\\}\\}|\\{\\{Innrykk\\|1\\}\\}")).map {
             Paragraph.create(it)
@@ -208,12 +221,15 @@ ${it}
 
             return Chapter(c)
         }
+
     }
 }
 
 
 fun main() = runBlocking {
     val chapters = listOf(
+        Chapter.create(1, 6),
+        Chapter.create(7, 9),
         Chapter.create(11, 27),
         Chapter.create(28, 51),
         Chapter.create(52, 64),
@@ -222,13 +238,54 @@ fun main() = runBlocking {
         Chapter.create(105, 119),
         Chapter.create(120, 132),
         Chapter.create(133, 148),
+        Chapter.create(149, 168),
+        Chapter.create(169, 184),
+        Chapter.create(185, 207),
+        Chapter.create(185, 207),
+        Chapter.create(208, 220),
+        Chapter.create(221, 243),
+        Chapter.create(244, 258),
+        Chapter.create(259, 278),
+        Chapter.create(303, 323),
+        Chapter.create(324, 340),
         Chapter.create(341, 352),
+        Chapter.create(353, 366),
+        Chapter.create(367, 383),
+        Chapter.create(384, 397),
+        Chapter.create(398, 421),
+        Chapter.create(422, 443),
     )
 
-    chapters.forEach { ch ->
+    val path  = "files"
+    File(path).mkdirs()
+
+    chapters.forEachIndexed { index, ch ->
         println("-----")
         println(ch.html())
+
+        val filename = "$path/chapter_$index.xhtml"
+        File(filename)
     }
+
+    val ebook = Book().apply {
+        metadata.titles.add("Iliaden")
+        metadata.apply {
+            titles.add("Iliaden")
+            contributors.add(Author("Oversetter", "P. Østbye"))
+            contributors.add(Author("Homer"))
+            contributors.add(Author("Digitalisering", "Øystein Tvede"))
+            publishers.add("H. ASCHEHOUG & CO. (W. NYGAARD)")
+        }
+
+        chapters.forEachIndexed { index, ch ->
+            val chapterResource = Resource(ch.inputStream(), "chapter_$index.xhtml")
+
+            this.addSection(ch.title, chapterResource)
+        }
+    }
+
+    val ebookWriter = EpubWriter()
+    ebookWriter.write(ebook, FileOutputStream("files/iliaden.epub"))
     // val ch = chapters.drop(0).first()
 
     //println(ch.content)
