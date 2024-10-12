@@ -172,7 +172,7 @@ class Paragraph(val content: String) : Tag {
 }
 
 
-class Chapter(val content: String, style: Boolean) {
+class Chapter(val content: String, val useStyle: Boolean) {
     val title: String get() = tags().mapNotNull { it as? Heading }.joinToString(" - ") { it.text }
 
     fun inputStream(): InputStream = html().byteInputStream()
@@ -192,7 +192,7 @@ class Chapter(val content: String, style: Boolean) {
 lang="no">
 <head>
   <title>$title</title>
-  ${getStyle(style)}
+  ${getStyle(useStyle)}
 </head>
 <body>
 ${it}
@@ -203,7 +203,7 @@ ${it}
 
 
     companion object {
-        fun getStyle(s: Boolean) = if(s)
+        fun getStyle(s: Boolean): String = if(s)
             style
         else
             ""
