@@ -143,7 +143,10 @@ class Chapter(val content: String) {
 
             val c = (firstPage until lastPage).mapNotNull { page ->
                 val pageUrl = "https://api.wikimedia.org/core/v1/wikisource/no/page/Side%3AIliaden.djvu%2F$page"
-                val filename = "iliaden_$page.wikimedia"
+
+                val path = "files"
+                File("path").mkdirs()
+                val filename = "$path/iliaden_$page.wikimedia"
 
                 if(File(filename).exists()) {
                     File(filename).readText().let {
@@ -179,7 +182,6 @@ class Chapter(val content: String) {
 
 
 fun main() = runBlocking {
-    /*
     val chapters = listOf(
         Chapter.create(11, 27),
         Chapter.create(28, 51),
@@ -193,8 +195,7 @@ fun main() = runBlocking {
     )
 
     val ch = chapters.drop(2).first()
-    */
-    val ch = Chapter.create(28, 51)
+    //val ch = Chapter.create(28, 51)
 
     //println(ch.html())
     println(ch.content)
