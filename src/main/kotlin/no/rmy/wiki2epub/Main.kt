@@ -21,7 +21,7 @@ class Page(val page: Int, val source: String?) {
         json.jsonObject.get("source")?.jsonPrimitive?.contentOrNull
     )
 
-    override fun toString(): String = "{{Page:$page}}\n$content"
+    override fun toString(): String = "{{page|$page}}\n$content"
 
     fun cleanedContent(): String {
         return source?.let { text ->
@@ -40,7 +40,17 @@ interface Tag {
 }
 
 class Heading(val content: String, val level: Int = 1): Tag {
-    override fun html(): String = "<h$level>$content</h$level>"
+    val text get() = content.trim().split("|").last().trimEnd('}')
+
+    override fun html(): String = "<h$level>$text</h$level>"
+}
+
+class PageNumber(val content: String): Tag {
+    val text get() = content.trim().split("|").last().trimEnd('}')
+
+    override fun html(): String {
+        return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>\n"
+    }
 }
 
 
@@ -59,19 +69,31 @@ class Paragraph(val content: String) : Tag {
             while(lines.isNotEmpty()) {
                 val line = lines.first()
                 lines.removeFirst()
-                var tag: Tag? = if (line.startsWith("{{midtstilt|{{stor}}")) {
+                var tag: Tag? = if (line.startsWith("{{midtstilt|{{stor")) {
                     Heading(line, 1)
                 } else if (line.startsWith("{{midtstilt|")) {
                     Heading(line, 2)
+                } else if (line.startsWith("{{page|")) {
+                    PageNumber(line)
                 } else {
-                    p.add(line)
+                    var revisedLine = line
+                    listOf("{{innfelt initial ppoem|").mapNotNull { searchFor ->
+                        if(revisedLine.contains(searchFor)) {
+                            line.split(searchFor).last().split("}}").first().let { c ->
+                                revisedLine = revisedLine.replace("$searchFor$c}}", c)
+                            }
+                        }
+                    }
+                    p.add(revisedLine)
                     null
                 }
-                if (tag != null && p.isNotEmpty()) {
-                    tag = Paragraph(p.joinToString("\n"))
-                    p.clear()
-                }
                 if (tag != null) {
+                    if(p.isNotEmpty()) {
+                        Paragraph(p.joinToString("\n")).let {
+                            queue.add(it)
+                        }
+                        p.clear()
+                    }
                     queue.add(tag)
                 }
             }
