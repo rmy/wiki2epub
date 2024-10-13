@@ -65,7 +65,7 @@ class PageNumber(content: String) : Tag {
         "<span title=\"[Pg $text]\"><a id=\"Page_$text\" title=\"[Pg $text]\"></a></span>"
 
     fun html2(): String {
-        return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>"
+        return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>x"
     }
 
     fun html4(): String {
@@ -78,7 +78,11 @@ class PageNumber(content: String) : Tag {
 
 class Paragraph(val content: String, val isPoem: Boolean) : Tag {
     override fun html(): String = content.trim().lines().joinToString("\n").let {
-        "<p>\n${it.trim().replace("</span> <br/>", "</span>")}\n</p>"
+        "<p>\n${
+            it.trim()
+                .replace("</span>x <br/>", "</span>")
+                .replace("</span>x", "</span>")
+        }\n</p>"
     }
 
 
@@ -91,10 +95,10 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
             } else {
                 p.filter { it.isNotBlank() }.mapIndexed { index, it ->
                     if (isPageNumber(it)) {
-                        PageNumber(it.trim()).html()
+                        PageNumber(it.trim()).html() + "x"
                     } else {
                         if(isPoem) {
-                            "<div>$it</div>"
+                            "<span class=\"line\">$it</span>"
                         } else {
                             it.split(Regex("\\s+")).chunked(10).map {
                                 it.joinToString(" ")
@@ -102,7 +106,7 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                         }
                     }
                 }.let {
-                    Paragraph(it.joinToString("\n"), isPoem)
+                    Paragraph(it.joinToString(" <br/>\n"), isPoem)
                 }
             }
 
@@ -126,7 +130,9 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                         "{{page|",
                         "{{Sperret|",
                         "{{nodent|{{innfelt initial|",
-                        "{{Blank linje"
+                        "{{Blank linje",
+                        "{{høyre|''"
+
                     ).forEach { searchFor ->
                         var tries = 5
                         while (--tries > 0 && revisedLine.contains(searchFor)) {
@@ -152,6 +158,10 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                                     "{{nodent|{{innfelt initial|" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<big>$c</big>")
                                         revisedLine = revisedLine.replace("}}", "")
+                                    }
+                                    "{{høyre|''" -> {
+                                        revisedLine = revisedLine.replace(oldValue, "$c")
+                                        revisedLine = revisedLine.split("''").first().let { "<center>$it</center>" }
                                     }
 
                                     else -> {
@@ -285,7 +295,7 @@ ${it}
 fun main() = runBlocking {
     val chapters = listOf(
         // Chapter.create(1, 6, false),
-        Chapter.create(7, 9, false),
+        Chapter.create(7, 10, false),
         Chapter.create(11, 27),
         Chapter.create(28, 51),
         Chapter.create(52, 64),

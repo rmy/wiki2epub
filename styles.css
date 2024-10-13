@@ -1,38 +1,38 @@
-  h1 {
+h1 {
     text-align: center;
     font-size: 1.2em;
-  }
+}
 
-  h2 {
+h2 {
     text-align: center;
     font-size: 1em;
-  }
+}
 
-  em {
+em {
     letter-spacing: 0.2em;
     font-style: normal;
-  }
+}
 
-  p {
+p {
     margin: 0;
-  }
-
-  big {
-      font-size: 2.5em;
-  }
-
-
-
-  div {
-    margin-left: 4em;
-    text-indent: -4em;
     padding: 0;
-  }
+    margin-left: 3em;
+    text-indent: 1em;
+}
 
-  div:first-child {
+big {
+    font-size: 2.5em;
+}
+
+span.line {
     text-indent: -3em;
-    margin-left: 4em;
+    white-space: pre-wrap;
+    display: inline-block;
+    margin: 0;
     padding: 0;
-  }
+}
 
+br {
+    display: none;
+}
 
