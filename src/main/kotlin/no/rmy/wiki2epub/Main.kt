@@ -144,7 +144,7 @@ class Paragraph(val content: String) : Tag {
                                     "{{Blank linje" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<hr/>")
                                     }
-                                    "{{nodent|{{innfelt initial|" -> {
+                                    "{{innfelt initial ppoem|", "{{nodent|{{innfelt initial|" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<big>$c</big>")
                                     }
 
@@ -207,9 +207,9 @@ ${it}
 
     companion object {
         fun getStyle(s: Boolean): String = if(s)
-            "<link rel=\"stylesheet\" href=\"styles.css\">"
+            "<link rel=\"stylesheet\" href=\"styles.css\" />"
         else
-            ""
+            "<link rel=\"stylesheet\" href=\"styles.css\" />"
 
         val style = """
   <style>
@@ -296,7 +296,7 @@ fun main() = runBlocking {
     println("Styles")
     val styles = File("styles.css").readText()
 
-    val path = "files"
+    val path = "files/html"
     File(path).mkdirs()
 
     chapters.forEachIndexed { index, ch ->

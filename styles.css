@@ -14,26 +14,24 @@
   }
 
   p {
-    padding: 2em;
     margin: 0;
   }
 
-/*
-  div.first:first-letter {
+  big {
       font-size: 2.5em;
-      vertical-align: text-top;
-  }
- */
-
-  .first {
-    text-indent; 2em
   }
 
 
 
   div {
-    margin-left: 3em;
+    margin-left: 4em;
+    text-indent: -4em;
+    padding: 0;
+  }
+
+  div:first-child {
     text-indent: -3em;
+    margin-left: 4em;
     padding: 0;
   }
 
