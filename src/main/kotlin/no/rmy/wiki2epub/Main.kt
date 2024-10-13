@@ -1,6 +1,5 @@
 package no.rmy.wiki2epub
 
-import com.sun.java.accessibility.util.Translator
 import io.documentnode.epub4j.domain.Author
 import io.documentnode.epub4j.domain.Book
 import io.documentnode.epub4j.domain.Resource
@@ -59,11 +58,11 @@ class Heading(val content: String, val level: Int = 1) : Tag {
     override fun html(): String = "<h$level>$text</h$level>"
 }
 
-class PageNumber(val content: String) : Tag {
-    val text get() = content.trim().split("|").last().trimEnd('}')
+class PageNumber(content: String) : Tag {
+    val text = content.trim().split("|").last().trimEnd('}')
 
     fun html3(): String =
-        "<span title=\"[Pg $text]\" id=\"pgepubid00259\"><a id=\"Page_$text\" title=\"[Pg $text]\"></a></span>"
+        "<span title=\"[Pg $text]\"><a id=\"Page_$text\" title=\"[Pg $text]\"></a></span>"
 
     fun html2(): String {
         return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>"
@@ -77,7 +76,7 @@ class PageNumber(val content: String) : Tag {
 }
 
 
-class Paragraph(val content: String) : Tag {
+class Paragraph(val content: String, val isPoem: Boolean) : Tag {
     override fun html(): String = content.trim().lines().joinToString("\n").let {
         "<p>\n${it.trim().replace("</span> <br/>", "</span>")}\n</p>"
     }
@@ -86,26 +85,28 @@ class Paragraph(val content: String) : Tag {
     companion object {
         fun isPageNumber(s: String): Boolean = s.startsWith("{{page|")
 
-        fun toTag(p: List<String>): Tag = // Paragraph(p.joinToString("\n"))
+        fun toTag(p: List<String>, isPoem: Boolean): Tag = // Paragraph(p.joinToString("\n"))
             if (p.size == 1 && isPageNumber(p.first())) {
                 PageNumber(p.first())
             } else {
-                p.mapIndexed { index, it ->
+                p.filter { it.isNotBlank() }.mapIndexed { index, it ->
                     if (isPageNumber(it)) {
                         PageNumber(it.trim()).html()
                     } else {
-                        if (index == 0) {
-                            "<div class=\"first\">$it</div>"
-                        } else {
+                        if(isPoem) {
                             "<div>$it</div>"
+                        } else {
+                            it.split(Regex("\\s+")).chunked(10).map {
+                                it.joinToString(" ")
+                            }.joinToString("\n")
                         }
                     }
                 }.let {
-                    Paragraph(it.joinToString("\n"))
+                    Paragraph(it.joinToString("\n"), isPoem)
                 }
             }
 
-        fun create(content: String): List<Tag> {
+        fun create(content: String, isPoem: Boolean = true): List<Tag> {
             val queue = mutableListOf<Tag>()
 
             val lines = content.trim().lines().toMutableList()
@@ -134,7 +135,8 @@ class Paragraph(val content: String) : Tag {
                                 // println(oldValue)
                                 when (searchFor) {
                                     "{{page|" -> {
-                                        //revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
+                                        if(!isPoem)
+                                            revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
                                     }
 
                                     "{{Sperret|" -> {
@@ -144,8 +146,12 @@ class Paragraph(val content: String) : Tag {
                                     "{{Blank linje" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<hr/>")
                                     }
-                                    "{{innfelt initial ppoem|", "{{nodent|{{innfelt initial|" -> {
+                                    "{{innfelt initial ppoem|" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<big>$c</big>")
+                                    }
+                                    "{{nodent|{{innfelt initial|" -> {
+                                        revisedLine = revisedLine.replace(oldValue, "<big>$c</big>")
+                                        revisedLine = revisedLine.replace("}}", "")
                                     }
 
                                     else -> {
@@ -160,14 +166,14 @@ class Paragraph(val content: String) : Tag {
                 }
                 if (tag != null) {
                     if (p.isNotEmpty()) {
-                        queue.add(toTag(p))
+                        queue.add(toTag(p, isPoem))
                         p.clear()
                     }
                     queue.add(tag)
                 }
             }
             if (p.isNotEmpty()) {
-                queue.add(toTag(p))
+                queue.add(toTag(p, isPoem))
             }
             return queue
         }
@@ -176,14 +182,27 @@ class Paragraph(val content: String) : Tag {
 
 
 class Chapter(val content: String, val useStyle: Boolean) {
-    val title: String get() = tags().mapNotNull { it as? Heading }.joinToString(" - ") { it.text }
+    val title: String get() =
+        tags().mapNotNull { it as? Heading }.joinToString(" - ") { it.text }
 
     fun inputStream(): InputStream = html().byteInputStream()
 
-    fun tags(): List<Tag> =
+    fun tags(): List<Tag> = if(useStyle)
+        tagsPoem()
+    else
+        tagsNormal()
+
+    fun tagsPoem(): List<Tag> =
         content.split(Regex("\\{\\{gap\\|1em\\}\\}|\\{\\{Innrykk\\|1\\}\\}")).map {
             Paragraph.create(it)
         }.flatten()
+
+   fun tagsNormal(): List<Tag> =
+       content.split("\n\n").map {
+           it.replace("\n", " ")
+       }.map {
+           Paragraph.create(it, false)
+       }.flatten()
 
     fun html(): String = tags().map {
         it.html()
@@ -209,7 +228,7 @@ ${it}
         fun getStyle(s: Boolean): String = if(s)
             "<link rel=\"stylesheet\" href=\"styles.css\" />"
         else
-            "<link rel=\"stylesheet\" href=\"styles.css\" />"
+            "<link rel=\"stylesheet\" href=\"innledning.css\" />"
 
         val style = """
   <style>
@@ -218,7 +237,7 @@ ${it}
         """.trimIndent()
 
 
-        suspend fun create(firstPage: Int, lastPage: Int, style: Boolean = false): Chapter {
+        suspend fun create(firstPage: Int, lastPage: Int, style: Boolean = true): Chapter {
             val httpClient = HttpClient(CIO)
             val jsonDecoder = Json {
                 isLenient = true
@@ -293,9 +312,6 @@ fun main() = runBlocking {
         Chapter.create(422, 443),
     )
 
-    println("Styles")
-    val styles = File("styles.css").readText()
-
     val path = "files/html"
     File(path).mkdirs()
 
@@ -317,11 +333,12 @@ fun main() = runBlocking {
             publishers.add("H. ASCHEHOUG & CO. (W. NYGAARD)")
         }
 
-        println("styles2")
-        val styleResource = Resource(styles.byteInputStream(), "styles.css")
-        addResource(styleResource)
-
-        println("after")
+        Resource(File("styles.css").inputStream(), "styles.css").let {
+            addResource(it)
+        }
+        Resource(File("innledning.css").inputStream(), "innledning.css").let {
+            addResource(it)
+        }
 
         chapters.forEachIndexed { index, ch ->
             val chIndex = index + 1
