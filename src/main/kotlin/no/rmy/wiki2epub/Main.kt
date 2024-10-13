@@ -144,6 +144,9 @@ class Paragraph(val content: String) : Tag {
                                     "{{Blank linje" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<hr/>")
                                     }
+                                    "{{nodent|{{innfelt initial|" -> {
+                                        revisedLine = revisedLine.replace(oldValue, "<big>$c</big>")
+                                    }
 
                                     else -> {
                                         revisedLine = revisedLine.replace("$searchFor$c}}", c)
@@ -204,52 +207,12 @@ ${it}
 
     companion object {
         fun getStyle(s: Boolean): String = if(s)
-            style
+            "<link rel=\"stylesheet\" href=\"styles.css\">"
         else
             ""
 
         val style = """
   <style>
-  h1 {
-    text-align: center;
-    font-size: 1em;
-  }
-  
-  h2 {
-    text-align: center;
-    font-size: 1em;
-  }
-
-  em {
-    letter-spacing: 0.2em;
-    font-style: normal;
-  }
-
-  p {
-    padding: 2em;
-    margin: 0;
-  }
-
-/*
-  div.first:first-letter {
-      font-size: 2.5em;
-      vertical-align: text-top;
-  }
- */
-  
-  .first {
-    text-indent; 2em
-  }
-        
-
-  
-  div {
-    margin-left: 3em;
-    text-indent: -3em;
-    padding: 0;
-  }
-  
-  
   </style>
             
         """.trimIndent()
@@ -330,6 +293,9 @@ fun main() = runBlocking {
         Chapter.create(422, 443),
     )
 
+    println("Styles")
+    val styles = File("styles.css").readText()
+
     val path = "files"
     File(path).mkdirs()
 
@@ -338,7 +304,7 @@ fun main() = runBlocking {
         println(ch.html())
 
         val filename = "$path/chapter_$index.xhtml"
-        File(filename)
+        File(filename).writeText(ch.html())
     }
 
     val ebook = Book().apply {
@@ -351,9 +317,15 @@ fun main() = runBlocking {
             publishers.add("H. ASCHEHOUG & CO. (W. NYGAARD)")
         }
 
+        println("styles2")
+        val styleResource = Resource(styles.byteInputStream(), "styles.css")
+        addResource(styleResource)
+
+        println("after")
 
         chapters.forEachIndexed { index, ch ->
-            val chapterResource = Resource(ch.inputStream(), "chapter_$index.xhtml")
+            val chIndex = index + 1
+            val chapterResource = Resource(ch.inputStream(), "chapter_$chIndex.xhtml")
 
             this.addSection(ch.title, chapterResource)
             spine.addResource(chapterResource)
