@@ -15,24 +15,19 @@ em {
 
 p {
     margin: 0;
-    padding: 0;
-    margin-left: 3em;
-    text-indent: 1em;
+    padding: 0 0 0 1.5em;
 }
 
 big {
     font-size: 2.5em;
 }
 
-span.line {
+.one {
+    margin: 0 0 0 4em;
     text-indent: -3em;
-    white-space: pre-wrap;
-    display: inline-block;
-    margin: 0;
-    padding: 0;
 }
 
-br {
-    display: none;
+.follow {
+    margin: 0 0 0 4em;
+    text-indent: -4em;
 }
-

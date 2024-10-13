@@ -80,7 +80,7 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
     override fun html(): String = content.trim().lines().joinToString("\n").let {
         "<p>\n${
             it.trim()
-                .replace("</span>x <br/>", "</span>")
+                .replace("</span>x<br/>", "</span>")
                 .replace("</span>x", "</span>")
         }\n</p>"
     }
@@ -98,7 +98,13 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                         PageNumber(it.trim()).html() + "x"
                     } else {
                         if(isPoem) {
-                            "<span class=\"line\">$it</span>"
+                            when(index) {
+                                0 -> "<div class=\"one\">$it</div>"
+                                else -> "<div class=\"follow\">$it</div>"
+                            }
+                            //"<div class=\"line\">$it</div>"
+                            //"<span class=\"line\">$it</span>"
+                            //it
                         } else {
                             it.split(Regex("\\s+")).chunked(10).map {
                                 it.joinToString(" ")
@@ -106,7 +112,10 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                         }
                     }
                 }.let {
-                    Paragraph(it.joinToString(" <br/>\n"), isPoem)
+                    Paragraph(it.joinToString(
+                        //"<br/>\n"
+                        "\n"
+                    ) { it.trim() }, isPoem)
                 }
             }
 
