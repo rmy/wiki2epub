@@ -284,7 +284,7 @@ ${it}
 
 fun main() = runBlocking {
     val chapters = listOf(
-        Chapter.create(1, 6, false),
+        // Chapter.create(1, 6, false),
         Chapter.create(7, 9, false),
         Chapter.create(11, 27),
         Chapter.create(28, 51),
@@ -347,7 +347,10 @@ fun main() = runBlocking {
             this.addSection(ch.title, chapterResource)
             spine.addResource(chapterResource)
         }
+
     }
+
+
 
     val ebookWriter = EpubWriter()
     ebookWriter.write(ebook, FileOutputStream("files/iliaden.epub"))
