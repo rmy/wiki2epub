@@ -262,7 +262,7 @@ ${it}
                 isLenient = true
             }
 
-            val c = (firstPage until lastPage).mapNotNull { page ->
+            val c = (firstPage .. lastPage).mapNotNull { page ->
                 val pageUrl = "https://api.wikimedia.org/core/v1/wikisource/no/page/Side%3AIliaden.djvu%2F$page"
 
                 val path = "files"

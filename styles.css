@@ -14,8 +14,8 @@ em {
 }
 
 p {
-    margin: 0;
-    padding: 0 0 0 1.5em;
+    padding: 0;
+    margin: 0 0 0 1.25em;
 }
 
 big {
@@ -23,11 +23,12 @@ big {
 }
 
 .one {
-    margin: 0 0 0 4em;
-    text-indent: -3em;
+    margin: 0em;
+    padding: 0 0 0 4em;
+    text-indent: -2.5em;
 }
 
 .follow {
     margin: 0 0 0 4em;
-    text-indent: -4em;
+    text-indent: -3.5em;
 }
