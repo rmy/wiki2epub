@@ -73,18 +73,23 @@ class PageNumber(content: String) : Tag {
     }
 
     override fun epub2html(): String =
-        "<span title=\"[Pg $number]\"><a id=\"Page_$number\" title=\"[Pg $number]\"></a></span>x"
+        "<span title=\"[Pg $number]\"><a id=\"Page_$number\" title=\"[Pg $number]\"></a></span>"
 
     override fun epub3html(): String {
         //return "<span epub:type=\"pagebreak\" id=\"page$number\">$number</span>x"
-        return "<span epub:type=\"pagebreak\" title=\"$number\" id=\"side$number\"></span>x"
+        return "<span epub:type=\"pagebreak\" title=\"$number\" id=\"side$number\"></span>"
     }
 
     fun spannedNumberHtml(): String {
         return "<span>$number</span>"
     }
 
-    override fun html(): String = number?.let { epub2html() } ?: ""
+    override fun html(): String = number?.let {
+        when(Mode.current) {
+            Mode.EBPU2 -> epub2html()
+            Mode.EPUB3 -> epub3html()
+        }
+    } ?: ""
 }
 
 
