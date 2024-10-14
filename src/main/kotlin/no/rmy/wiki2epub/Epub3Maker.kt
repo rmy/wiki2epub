@@ -36,7 +36,7 @@ object Epub3Maker {
                 book.addCoverImage(
                     it.readAllBytes(),
                     "image/jpeg",
-                    "images/cover.jpeg"
+                    "images/cover.jpg"
                 );
             }
 
@@ -57,25 +57,30 @@ object Epub3Maker {
             // Create toc
             val tocLinks: MutableList<TocLink> = ArrayList<TocLink>()
 
-            listOf("cover.xhtml", "tittelside3.xhtml").forEach { filename ->
+            listOf("omslag.xhtml", "kolofon3.xhtml").forEach { filename ->
                 val href = filename.replace("3", "")
+                val id = href.split(".").first()
+                val title = id.uppercase() + "."
                 File(filename).inputStream().let {
                     book.addContent(
                         it,
                         "application/xhtml+xml", href,
-                        true,
+                        false,
                         true
-                    ).setId(href.split(".").first())
+                    ).setId(id)
                 }
-                val chapterToc: TocLink = TocLink(href, "KOLOFON.", null)
-                tocLinks.add(chapterToc)
+                val sectionToc: TocLink = TocLink(href, title, null)
+                // tocLinks.add(sectionToc)
 
                 val landmark = Landmark()
-                landmark.setType("bodymatter")
+                when(href) {
+                    "omslag" -> landmark.setType("cover")
+                    "kolofon" -> landmark.setType("bodymatter")
+                }
                 landmark.setHref(href)
-                landmark.setTitle("KOLOFON.")
+                landmark.setTitle(title)
 
-                landmarks.add(landmark)
+                // landmarks.add(landmark)
             }
 
             chapters.forEachIndexed { index, ch ->

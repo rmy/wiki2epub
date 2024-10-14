@@ -44,8 +44,8 @@ object Epub2Maker {
 
 
             when (Mode.current) {
-                Mode.EPUB2 -> "tittelside.xhtml"
-                Mode.EPUB3 -> "tittelside3.xhtml"
+                Mode.EPUB2 -> "kolofon.xhtml"
+                Mode.EPUB3 -> "kolofon3.xhtml"
             }.let { filename ->
                 Resource(File(filename).inputStream(), "tittelside.xhtml").let {
                     addResource(it)
