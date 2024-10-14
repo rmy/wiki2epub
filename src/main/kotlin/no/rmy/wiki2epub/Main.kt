@@ -343,13 +343,22 @@ fun main() = runBlocking {
     }
 
     val ebook = Book().apply {
-        metadata.titles.add("Iliaden")
         metadata.apply {
             titles.add("Iliaden")
-            contributors.add(Author("Oversetter", "P. Østbye"))
+            contributors.add(Author("Peder", "Østbye"))
             contributors.add(Author("Homer"))
-            contributors.add(Author("Digitalisering", "Øystein Tvede"))
+            contributors.add(Author("Øystein", "Tvede"))
             publishers.add("H. ASCHEHOUG & CO. (W. NYGAARD)")
+        }
+
+        Resource(File("iliaden_cover.jpg").inputStream(), "iliaden_cover.jpg").let {
+            addResource(it)
+        }
+        Resource(File("tittelside.xhtml").inputStream(), "tittelside.xhtml").let {
+            addResource(it)
+        }
+        Resource(File("styles.css").inputStream(), "styles.css").let {
+            addResource(it)
         }
 
         Resource(File("styles.css").inputStream(), "styles.css").let {
