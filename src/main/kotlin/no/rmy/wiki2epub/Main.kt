@@ -357,10 +357,6 @@ fun main() = runBlocking {
         Resource(File("styles.css").inputStream(), "styles.css").let {
             addResource(it)
         }
-
-        Resource(File("styles.css").inputStream(), "styles.css").let {
-            addResource(it)
-        }
         Resource(File("innledning.css").inputStream(), "innledning.css").let {
             addResource(it)
         }
