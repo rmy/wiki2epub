@@ -59,20 +59,27 @@ class Heading(val content: String, val level: Int = 1) : Tag {
 }
 
 class PageNumber(content: String) : Tag {
-    val text = content.trim().split("|").last().trimEnd('}')
-
-    fun html3(): String =
-        "<span title=\"[Pg $text]\"><a id=\"Page_$text\" title=\"[Pg $text]\"></a></span>"
-
-    fun html2(): String {
-        return "<span epub:type=\"pagebreak\" id=\"page$text\">$text</span>x"
+    val text2 = content.trim().split("|").last().trimEnd('}')
+    val number: Int? = text2.toIntOrNull()?.let {
+        val page = it - 10
+        if(page > 0)
+            page
+        else
+            null
     }
 
-    fun html4(): String {
-        return "<span>$text</span>"
+    fun epub2html(): String =
+        "<span title=\"[Pg $number]\"><a id=\"Page_$number\" title=\"[Pg $number]\"></a></span>"
+
+    fun epub3html(): String {
+        return "<span epub:type=\"pagebreak\" id=\"page$number\">$number</span>x"
     }
 
-    override fun html(): String = html3()
+    fun spannedNumberHtml(): String {
+        return "<span>$number</span>"
+    }
+
+    override fun html(): String = number?.let { epub2html() } ?: ""
 }
 
 
