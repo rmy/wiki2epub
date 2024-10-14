@@ -21,6 +21,7 @@ dependencies {
     implementation("io.ktor:ktor-client-logging:$ktor_version")
     implementation("io.ktor:ktor-client-auth:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("net.seeseekey:epubwriter:1.0.4")
 
     implementation("ch.qos.logback:logback-classic:${logbackVersion}")
     testImplementation(kotlin("test"))
