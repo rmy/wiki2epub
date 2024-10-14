@@ -1,0 +1,40 @@
+h1 {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+h2 {
+    text-align: center;
+    font-size: 1em;
+}
+
+em {
+    letter-spacing: 0.2em;
+    font-style: normal;
+}
+
+p {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+strong.big {
+    font-style: normal;
+    font-size: 2em;
+}
+
+.one {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 3.5em;
+    text-indent: -2.5em;
+}
+
+.follow {
+    margin-top: 0em;
+    margin-bottom: 0em;
+    padding-left: 3.5em;
+    text-indent: -3.5em;
+}
