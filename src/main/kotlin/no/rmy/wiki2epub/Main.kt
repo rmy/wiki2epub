@@ -438,11 +438,8 @@ fun main() = runBlocking {
             Mode.EBPU2 -> "iliaden.epup"
             Mode.EPUB3 -> "iliaden_epub3.epub"
         }.let {
-            ebookWriter.write(ebook, FileOutputStream("files/iliaden.epub"))
+            ebookWriter.write(ebook, FileOutputStream("files/$it"))
         }
-        // val ch = chapters.drop(0).first()
-
-        //println(ch.content)
     }
 }
 
