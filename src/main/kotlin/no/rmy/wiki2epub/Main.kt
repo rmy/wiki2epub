@@ -352,10 +352,7 @@ fun main() = runBlocking {
         }
 
         Resource(File("iliaden_cover.jpg").inputStream(), "iliaden_cover.jpg").let {
-            addResource(it)
-        }
-        Resource(File("tittelside.xhtml").inputStream(), "tittelside.xhtml").let {
-            addResource(it)
+            setCoverImage(it)
         }
         Resource(File("styles.css").inputStream(), "styles.css").let {
             addResource(it)
@@ -368,6 +365,10 @@ fun main() = runBlocking {
             addResource(it)
         }
 
+        Resource(File("tittelside.xhtml").inputStream(), "tittelside.xhtml").let {
+            addResource(it)
+            spine.addResource(it)
+        }
         chapters.forEachIndexed { index, ch ->
             val chIndex = index + 1
             val chapterResource = Resource(ch.inputStream(), "chapter_$chIndex.xhtml")
