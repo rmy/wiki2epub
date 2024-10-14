@@ -50,29 +50,34 @@ class Page(val page: Int, val source: String?) {
 
 interface Tag {
     fun html(): String
+    fun epub2html(): String
+    fun epub3html(): String
 }
 
 class Heading(val content: String, val level: Int = 1) : Tag {
     val text get() = content.trim().split("|").last().trimEnd('}')
 
     override fun html(): String = "<h$level>$text</h$level>"
+    override fun epub2html(): String = html()
+    override fun epub3html(): String = html()
 }
 
 class PageNumber(content: String) : Tag {
     val text2 = content.trim().split("|").last().trimEnd('}')
     val number: Int? = text2.toIntOrNull()?.let {
         val page = it - 10
-        if(page > 0)
+        if (page > 0)
             page
         else
             null
     }
 
-    fun epub2html(): String =
-        "<span title=\"[Pg $number]\"><a id=\"Page_$number\" title=\"[Pg $number]\"></a></span>"
+    override fun epub2html(): String =
+        "<span title=\"[Pg $number]\"><a id=\"Page_$number\" title=\"[Pg $number]\"></a></span>x"
 
-    fun epub3html(): String {
-        return "<span epub:type=\"pagebreak\" id=\"page$number\">$number</span>x"
+    override fun epub3html(): String {
+        //return "<span epub:type=\"pagebreak\" id=\"page$number\">$number</span>x"
+        return "<span epub:type=\"pagebreak\" title=\"$number\" id=\"side$number\"></span>x"
     }
 
     fun spannedNumberHtml(): String {
@@ -92,6 +97,8 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
         }\n</p>"
     }
 
+    override fun epub2html(): String = html()
+    override fun epub3html(): String = html()
 
     companion object {
         fun isPageNumber(s: String): Boolean = s.startsWith("{{page|")
@@ -104,8 +111,8 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                     if (isPageNumber(it)) {
                         PageNumber(it.trim()).html() + "x"
                     } else {
-                        if(isPoem) {
-                            when(index) {
+                        if (isPoem) {
+                            when (index) {
                                 0 -> "<div class=\"one\">$it</div>"
                                 else -> "<div class=\"follow\">$it</div>"
                             }
@@ -119,10 +126,12 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                         }
                     }
                 }.let {
-                    Paragraph(it.joinToString(
-                        //"<br/>\n"
-                        "\n"
-                    ) { it.trim() }, isPoem)
+                    Paragraph(
+                        it.joinToString(
+                            //"<br/>\n"
+                            "\n"
+                        ) { it.trim() }, isPoem
+                    )
                 }
             }
 
@@ -157,7 +166,7 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                                 // println(oldValue)
                                 when (searchFor) {
                                     "{{page|" -> {
-                                        if(!isPoem)
+                                        if (!isPoem)
                                             revisedLine = revisedLine.replace(oldValue, PageNumber(oldValue).html())
                                     }
 
@@ -168,13 +177,16 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
                                     "{{Blank linje" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<hr/>")
                                     }
+
                                     "{{innfelt initial ppoem|" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<big>$c</big>")
                                     }
+
                                     "{{nodent|{{innfelt initial|" -> {
                                         revisedLine = revisedLine.replace(oldValue, "<big>$c</big>")
                                         revisedLine = revisedLine.replace("}}", "")
                                     }
+
                                     "{{høyre|''" -> {
                                         revisedLine = revisedLine.replace(oldValue, "$c")
                                         revisedLine = revisedLine.split("''").first().let { "<center>$it</center>" }
@@ -208,12 +220,13 @@ class Paragraph(val content: String, val isPoem: Boolean) : Tag {
 
 
 class Chapter(val content: String, val useStyle: Boolean) {
-    val title: String get() =
-        tags().mapNotNull { it as? Heading }.joinToString(" - ") { it.text }
+    val title: String
+        get() =
+            tags().mapNotNull { it as? Heading }.joinToString(" - ") { it.text }
 
     fun inputStream(): InputStream = html().byteInputStream()
 
-    fun tags(): List<Tag> = if(useStyle)
+    fun tags(): List<Tag> = if (useStyle)
         tagsPoem()
     else
         tagsNormal()
@@ -223,17 +236,28 @@ class Chapter(val content: String, val useStyle: Boolean) {
             Paragraph.create(it)
         }.flatten()
 
-   fun tagsNormal(): List<Tag> =
-       content.split("\n\n").map {
-           it.replace("\n", " ")
-       }.map {
-           Paragraph.create(it, false)
-       }.flatten()
+    fun tagsNormal(): List<Tag> =
+        content.split("\n\n").map {
+            it.replace("\n", " ")
+        }.map {
+            Paragraph.create(it, false)
+        }.flatten()
 
-    fun html(): String = tags().map {
-        it.html()
-    }.joinToString("\n\n").let {
-        """
+    fun epub3(body: String): String = """
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="En-US">
+<head>
+    <meta charset="UTF-8" />
+	<title>$title</title>
+    ${getStyle(useStyle)}
+</head>
+<body xmlns:epub="http://www.idpf.org/2007/ops" epub:type="bodymatter">
+$body
+</body>
+</html>
+""".trim()
+
+    fun epub2(body: String): String = """
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="no" dir="ltr"
@@ -243,15 +267,33 @@ lang="no">
   ${getStyle(useStyle)}
 </head>
 <body>
-${it}
+${body}
 </body>
-</html>        
-        """.trimIndent()
+</html>
+""".trim()
+
+    fun html(): String = when (Mode.current) {
+        Mode.EBPU2 -> epub2html()
+        Mode.EPUB3 -> epub3html()
+    }
+
+
+    fun epub2html(): String = tags().map {
+        it.epub2html()
+    }.joinToString("\n\n").let {
+        epub2(it)
+    }
+
+
+    fun epub3html(): String = tags().map {
+        it.epub3html()
+    }.joinToString("\n\n").let {
+        epub3(it)
     }
 
 
     companion object {
-        fun getStyle(s: Boolean): String = if(s)
+        fun getStyle(s: Boolean): String = if (s)
             "<link rel=\"stylesheet\" href=\"styles.css\" />"
         else
             "<link rel=\"stylesheet\" href=\"innledning.css\" />"
@@ -269,7 +311,7 @@ ${it}
                 isLenient = true
             }
 
-            val c = (firstPage .. lastPage).mapNotNull { page ->
+            val c = (firstPage..lastPage).mapNotNull { page ->
                 val pageUrl = "https://api.wikimedia.org/core/v1/wikisource/no/page/Side%3AIliaden.djvu%2F$page"
 
                 val path = "files"
@@ -338,56 +380,77 @@ fun main() = runBlocking {
         Chapter.create(422, 443),
     )
 
-    val path = "files/html"
-    File(path).mkdirs()
+    Mode.entries.forEach { currentMode ->
+        Mode.current = currentMode
 
-    chapters.forEachIndexed { index, ch ->
-        println("-----")
-        println(ch.html())
+        val path = when (Mode.current) {
+            Mode.EBPU2 -> "files/epub2"
+            Mode.EPUB3 -> "files/epub3"
+        }
+        File(path).mkdirs()
 
-        val filename = "$path/chapter_$index.xhtml"
-        File(filename).writeText(ch.html())
-    }
-
-    val ebook = Book().apply {
-        metadata.apply {
-            titles.add("Iliaden")
-            contributors.add(Author("Peder", "Østbye"))
-            contributors.add(Author("Homer"))
-            contributors.add(Author("Øystein", "Tvede"))
-            publishers.add("H. ASCHEHOUG & CO. (W. NYGAARD)")
-        }
-
-        Resource(File("iliaden_cover.jpg").inputStream(), "iliaden_cover.jpg").let {
-            setCoverImage(it)
-        }
-        Resource(File("styles.css").inputStream(), "styles.css").let {
-            addResource(it)
-        }
-        Resource(File("innledning.css").inputStream(), "innledning.css").let {
-            addResource(it)
-        }
-
-        Resource(File("tittelside.xhtml").inputStream(), "tittelside.xhtml").let {
-            addResource(it)
-            spine.addResource(it)
-        }
         chapters.forEachIndexed { index, ch ->
-            val chIndex = index + 1
-            val chapterResource = Resource(ch.inputStream(), "chapter_$chIndex.xhtml")
-
-            this.addSection(ch.title, chapterResource)
-            spine.addResource(chapterResource)
+            val filename = "$path/chapter_$index.xhtml"
+            File(filename).writeText(ch.html())
         }
 
+        val ebook = Book().apply {
+            metadata.apply {
+                titles.add("Iliaden")
+                contributors.add(Author("Homer"))
+                contributors.add(Author("Peder", "Østbye (oversetter)"))
+                contributors.add(Author("Øystein", "Tvede (digital utgave)"))
+                publishers.add("H. ASCHEHOUG & CO. (W. NYGAARD)")
+            }
+
+            Resource(File("iliaden_cover.jpg").inputStream(), "iliaden_cover.jpg").let {
+                setCoverImage(it)
+            }
+            Resource(File("styles.css").inputStream(), "styles.css").let {
+                addResource(it)
+            }
+            Resource(File("innledning.css").inputStream(), "innledning.css").let {
+                addResource(it)
+            }
+
+            when (Mode.current) {
+                Mode.EBPU2 -> "tittelside.xhtml"
+                Mode.EPUB3 -> "tittelside3.xhtml"
+            }.let { filename ->
+                Resource(File(filename).inputStream(), "tittelside.xhtml").let {
+                    addResource(it)
+                    spine.addResource(it)
+                }
+            }
+            chapters.forEachIndexed { index, ch ->
+                val chIndex = index + 1
+                val chapterResource = Resource(ch.inputStream(), "chapter_$chIndex.xhtml")
+
+                this.addSection(ch.title, chapterResource)
+                spine.addResource(chapterResource)
+            }
+
+        }
+
+
+        val ebookWriter = EpubWriter()
+        when (Mode.current) {
+            Mode.EBPU2 -> "iliaden.epup"
+            Mode.EPUB3 -> "iliaden_epub3.epub"
+        }.let {
+            ebookWriter.write(ebook, FileOutputStream("files/iliaden.epub"))
+        }
+        // val ch = chapters.drop(0).first()
+
+        //println(ch.content)
     }
-
-
-
-    val ebookWriter = EpubWriter()
-    ebookWriter.write(ebook, FileOutputStream("files/iliaden.epub"))
-    // val ch = chapters.drop(0).first()
-
-    //println(ch.content)
 }
 
+enum class Mode {
+    EBPU2, EPUB3;
+
+    companion object {
+        var current = EPUB3
+    }
+
+}
