@@ -48,7 +48,9 @@ class Chapter(val content: String, val useStyle: Boolean) {
     ${getStyle(useStyle)}
 </head>
 <body xmlns:epub="http://www.idpf.org/2007/ops" epub:type="bodymatter">
+<section epub:type="chapter" class="chapter">
 $body
+</section>
 </body>
 </html>
 """.trim()

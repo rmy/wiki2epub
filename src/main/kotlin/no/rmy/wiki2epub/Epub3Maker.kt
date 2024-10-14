@@ -1,6 +1,7 @@
 package no.rmy.wiki2epub
 
 import net.seeseekey.epubwriter.model.EpubBook
+import net.seeseekey.epubwriter.model.Landmark
 import net.seeseekey.epubwriter.model.TocLink
 import java.io.File
 import java.util.*
@@ -50,10 +51,13 @@ object Epub3Maker {
                 }
             }
 
+            // Create Landmarks
+            val landmarks: MutableList<Landmark> = mutableListOf()
+
             // Create toc
             val tocLinks: MutableList<TocLink> = ArrayList<TocLink>()
 
-            listOf("tittelside3.xhtml").forEach { filename ->
+            listOf("cover.xhtml", "tittelside3.xhtml").forEach { filename ->
                 val href = filename.replace("3", "")
                 File(filename).inputStream().let {
                     book.addContent(
@@ -61,10 +65,17 @@ object Epub3Maker {
                         "application/xhtml+xml", href,
                         true,
                         true
-                    )
+                    ).setId(href.split(".").first())
                 }
                 val chapterToc: TocLink = TocLink(href, "KOLOFON.", null)
                 tocLinks.add(chapterToc)
+
+                val landmark = Landmark()
+                landmark.setType("bodymatter")
+                landmark.setHref(href)
+                landmark.setTitle("KOLOFON.")
+
+                landmarks.add(landmark)
             }
 
             chapters.forEachIndexed { index, ch ->
@@ -77,7 +88,7 @@ object Epub3Maker {
                     "application/xhtml+xml", href,
                     true,
                     true
-                )
+                ).setId(href.split(".").first())
 
                 val chapterToc: TocLink = TocLink(href, ch.title, null)
                 tocLinks.add(chapterToc)
@@ -86,6 +97,9 @@ object Epub3Maker {
             // Set toc options
             book.setAutoToc(false)
             book.setTocLinks(tocLinks)
+
+            // Set landmarks
+            book.setLandmarks(landmarks)
 
             when (Mode.current) {
                 Mode.EPUB2 -> "iliaden.epub"
