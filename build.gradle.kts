@@ -23,11 +23,22 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("net.seeseekey:epubwriter:1.0.4")
     implementation("ch.qos.logback:logback-classic:${logbackVersion}")
-
+    implementation(kotlin("reflect"))
+    
     testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
     testImplementation(kotlin("test"))
 }
 
+sourceSets {
+    main {
+        java.srcDir("src/main/kotlin")
+        resources.srcDir("/src/main/resources")
+    }
+    test {
+        java.srcDir("src/test/kotlin")
+        resources.srcDir("src/test/resources")
+    }
+}
 application {
     mainClass.set("no.rmy.wiki2epub.MainKt")
 }
@@ -35,6 +46,10 @@ application {
 tasks.test {
     useJUnitPlatform()
 }
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
 kotlin {
     jvmToolchain(17)
 }

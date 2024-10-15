@@ -9,14 +9,14 @@ interface MwTag {
     fun content(): String
 }
 
-class MwText(override val parent: MwTag, val value: String): MwTag {
+class MwText(override val parent: MwTag, val value: String) : MwTag {
     override val name: String get() = "text"
 
     override fun content(): String = value
 }
 
 
-class MwParent(override val parent: MwTag?): MwTag {
+class MwParent(override val parent: MwTag?) : MwTag {
     override fun content(): String = children.joinToString("\n") {
         it.content()
     }
@@ -33,37 +33,45 @@ class MwParent(override val parent: MwTag?): MwTag {
         var offset: Int = 0
         val length = text.length
 
+        logger.info("Begin")
+
         // {{ppoem|start=follow|end=follow|
-        while(offset < length) {
-            when(text[offset]) {
+        while (offset < length) {
+            when (text[offset]) {
                 '{' -> {
                     ++offset
-                    if(text[offset] == '{') {
-                        text.substring(valueStart until offset).let {
+                    if (text[offset] == '{') {
+                        ++offset
+                        text.substring(valueStart, offset - 2).ifBlank { null }?.let {
+                            logger.info("Text: {}", it)
                             children.add(MwText(this, it))
                         }
-                        ++offset
                         valueStart = offset
 
-
-                        ++offset
-                        offset += MwParent(this).let {
+                        MwParent(this).let {
+                            offset += it.parse(text.substring(valueStart))
                             children.add(it)
-                            it.parse(text.substring(offset))
+                            valueStart = offset
                         }
                     }
                 }
 
                 '}' -> {
                     ++offset
-                    if(text[offset] == '}') {
+                    if (text[offset] == '}') {
                         ++offset
+                        text.substring(valueStart, offset - 2).ifBlank { null }?.let {
+                            logger.info("Text: {}", it)
+                            children.add(MwText(this, it))
+                        }
+                        valueStart = offset
                         break
                     }
                 }
 
                 '|' -> {
                     text.substring(valueStart until offset).let {
+                        logger.info("Value: {}", it)
                         values.add(it)
                     }
                     ++offset
@@ -73,6 +81,20 @@ class MwParent(override val parent: MwTag?): MwTag {
                 else -> ++offset
             }
         }
+
+        if (offset > valueStart) {
+            text.substring(valueStart, offset).ifBlank { null }?.let {
+                logger.info("TextEnd: {}", it)
+                children.add(MwText(this, it))
+            }
+        }
+
+        logger.info("End")
+
         return offset
+    }
+
+    companion object {
+        val logger = getAutoNamedLogger()
     }
 }
