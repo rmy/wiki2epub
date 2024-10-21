@@ -15,10 +15,10 @@ dependencies {
     val logbackVersion = "1.4.14"
 
     implementation("io.documentnode:epub4j-core:4.2.1")
-    implementation("org.sweble.wikitext:swc-parser-lazy:3.1.9")
+    // implementation("org.sweble.wikitext:swc-parser-lazy:3.1.9")
     implementation("io.ktor:ktor-client:$ktor_version")
     implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("io.ktor:ktor-client-logging:$ktor_version")
+    // implementation("io.ktor:ktor-client-logging:$ktor_version")
     implementation("io.ktor:ktor-client-auth:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     implementation("net.seeseekey:epubwriter:1.0.4")
