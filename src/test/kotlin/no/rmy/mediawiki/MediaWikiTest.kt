@@ -8,11 +8,12 @@ import org.slf4j.LoggerFactory
 class MediaWikiTest : FunSpec({
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    test("abc") {
+    test("parse some content") {
         logger.info(this.testCase.name.originalName)
         MediaWiki.iliaden(11)?.let {
             //logger.info(it.content())
         } ?: logger.info("No tags created")
     }
+
 })
 

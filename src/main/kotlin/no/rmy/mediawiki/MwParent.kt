@@ -10,7 +10,7 @@ class MwParent(override val parent: MwTag?) : MwTag {
 
     val properties: MutableList<String> = mutableListOf()
 
-    override val name: String get() = properties.firstOrNull() ?: ""
+    override val name: String get() = properties.firstOrNull()?.lowercase() ?: ""
 
 
     fun parse(text: String): Int {
