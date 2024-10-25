@@ -20,8 +20,26 @@ object MediaWiki {
 
 
     fun parse(text: String): MwTag {
+        var strippedText = text
+
+        while(true) {
+            val firstSplit = strippedText.split("</noinclude>", limit = 2)
+            if(firstSplit.size < 2)
+                break
+
+            val secondSplit = firstSplit.first().split("<noinclude>", limit = 2)
+            if(secondSplit.size < 2)
+                break
+
+            strippedText = listOf(
+                secondSplit.first(),
+                firstSplit.last()
+            ).joinToString("")
+        }
+
+
         return MwParent(null).apply {
-            parse(text)
+            parse(strippedText)
         }
     }
 
