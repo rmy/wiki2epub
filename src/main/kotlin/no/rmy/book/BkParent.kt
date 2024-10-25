@@ -13,7 +13,7 @@ abstract class BkParent(parent: BkPassage?): BkPassage(parent) {
 
     override fun append(tag: MwTag) {
         when(tag.name) {
-            "indent" -> {
+            "indent", "innrykk", "gap" -> {
                 children.add(BkParagraph(this))
             }
             else -> {

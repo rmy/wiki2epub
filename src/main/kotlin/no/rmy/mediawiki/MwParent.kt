@@ -10,6 +10,10 @@ class MwParent(override val parent: MwTag?) : MwTag {
 
     val properties: MutableList<String> = mutableListOf()
 
+    override fun hasProperty(name: String) =
+        properties.any { it.equals(name, true) }
+
+
     override val name: String get() = properties.firstOrNull()?.lowercase() ?: "unnamed"
 
     override fun render(): String = listOf(

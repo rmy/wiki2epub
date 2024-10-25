@@ -1,5 +1,6 @@
 package no.rmy.book
 
+import no.rmy.mediawiki.MwParent
 import no.rmy.mediawiki.MwTag
 
 class BkParagraph(parent: BkPassage?): BkPassage(parent) {
@@ -8,14 +9,19 @@ class BkParagraph(parent: BkPassage?): BkPassage(parent) {
     override fun append(tag: MwTag) {
         when(tag.name) {
             "text" -> {
-                content.append(tag.name)
-                content.append(": ")
                 content.append(tag.content())
             }
+
             else -> {
-                content.append(tag.name)
-                content.append(": ")
-                content.append(tag.content())
+                (tag as? MwParent)?.children?.also {
+                    it.forEach { tag ->
+                        append(tag)
+                    }
+                } ?: {
+                    content.append("\n\n" + tag.name)
+                    content.append(": ")
+                    content.append(tag.content())
+                }
             }
         }
     }

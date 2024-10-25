@@ -2,6 +2,7 @@ package no.rmy.book
 
 import no.rmy.mediawiki.MwParent
 import no.rmy.mediawiki.MwTag
+import org.slf4j.LoggerFactory
 
 class Book: BkParent(null) {
 
@@ -19,7 +20,24 @@ class Book: BkParent(null) {
                 }
                 children.add(BkNone(this))
             }
+            "midtstilt" -> {
+                if(currentChild() is BkNone) {
+                    children.removeLast()
+                }
+                BkHeading(this).also { heading ->
+                    heading.append(tag)
+                    children.add(heading)
+                }
+            }
+            "unnamed" -> {
+                (tag as? MwParent)?.let {
+                    it.children.forEach {
+                        append(it)
+                    }
+                }
+            }
             else -> {
+                logger.info(tag.name)
                 if(currentChild() is BkNone) {
                     children.removeLast()
                 }
@@ -30,5 +48,10 @@ class Book: BkParent(null) {
                 children.add(BkNone(this))
             }
         }
+    }
+
+
+    companion object {
+        val logger = LoggerFactory.getLogger("Book")
     }
 }
