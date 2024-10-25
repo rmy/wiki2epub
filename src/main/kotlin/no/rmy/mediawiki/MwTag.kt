@@ -7,4 +7,6 @@ interface MwTag {
     val name: String get() = "Undefined"
 
     fun content(): String
+
+    fun render(): String
 }

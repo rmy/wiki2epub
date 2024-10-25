@@ -12,6 +12,13 @@ class MwParent(override val parent: MwTag?) : MwTag {
 
     override val name: String get() = properties.firstOrNull()?.lowercase() ?: "unnamed"
 
+    override fun render(): String = listOf(
+        properties,
+        children.map { it.render() }
+    ).flatten().joinToString("|").let {
+        "{{$it}}"
+    }
+
 
     fun parse(text: String): Int {
         var valueStart: Int = 0

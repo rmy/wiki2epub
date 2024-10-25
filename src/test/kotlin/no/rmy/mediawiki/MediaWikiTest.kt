@@ -9,13 +9,6 @@ import org.slf4j.LoggerFactory
 class MediaWikiTest : FunSpec({
     val logger = LoggerFactory.getLogger(this::class.java)
 
-    test("parse some content") {
-        logger.info(this.testCase.name.originalName)
-        MediaWiki.iliaden(11)?.let {
-            //logger.info(it.content())
-        } ?: logger.info("No tags created")
-    }
-
     test("output html") {
         logger.info(this.testCase.name.originalName)
         MediaWiki.iliaden(11)?.let {
@@ -24,7 +17,15 @@ class MediaWikiTest : FunSpec({
             println(book.renderHtml())
             logger.info(book.renderHtml())
         //logger.info(it.content())
-    } ?: logger.info("No tags created")
-}
+        } ?: logger.info("No tags created")
+    }
+
+    test("parse some content") {
+        logger.info(this.testCase.name.originalName)
+        MediaWiki.iliaden(11)?.let {
+            logger.info(it.render())
+        } ?: logger.info("No tags created")
+    }
+
 })
 

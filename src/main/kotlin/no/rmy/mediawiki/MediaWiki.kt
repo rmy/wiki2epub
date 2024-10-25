@@ -26,6 +26,7 @@ object MediaWiki {
     }
 
 
+
     suspend fun iliaden(page: Int): MwTag? {
         val path = "files"
         File(path).mkdirs()
