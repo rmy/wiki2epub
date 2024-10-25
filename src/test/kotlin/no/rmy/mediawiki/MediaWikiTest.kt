@@ -11,7 +11,7 @@ class MediaWikiTest : FunSpec({
 
     test("output html") {
         logger.info(this.testCase.name.originalName)
-        MediaWiki.iliaden(11)?.let {
+        MediaWiki.iliaden(11, 27)?.let {
             val book = Book()
             book.append(it)
             println(book.renderHtml())
@@ -22,7 +22,7 @@ class MediaWikiTest : FunSpec({
 
     test("parse some content") {
         logger.info(this.testCase.name.originalName)
-        MediaWiki.iliaden(11)?.let {
+        MediaWiki.iliaden(11, 27)?.let {
             logger.info(it.render())
         } ?: logger.info("No tags created")
     }

@@ -27,5 +27,5 @@ class BkParagraph(parent: BkPassage?): BkPassage(parent) {
     }
 
     override fun renderHtml(): String =
-        "<p>\n${content.toString()}\n</p>"
+        "<p>\n${content.toString().trim().lines().filter { it.isNotBlank() }.joinToString("\n")}\n</p>"
 }
