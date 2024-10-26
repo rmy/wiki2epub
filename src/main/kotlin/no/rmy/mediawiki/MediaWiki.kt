@@ -56,6 +56,7 @@ object MediaWiki {
                 }
             } else {
                 val pageUrl = "https://api.wikimedia.org/core/v1/wikisource/no/page/Side%3AIliaden.djvu%2F$page"
+                // https://api.wikimedia.org/core/v1/wikisource/no/page/Iliaden%3AVreden._Pesten.
                 val result = httpClient.request {
                     url(pageUrl)
                 }
