@@ -16,7 +16,7 @@ class MediaWikiTest : FunSpec({
             book.append(it)
             println(book.renderHtml())
             logger.info(book.renderHtml())
-        //logger.info(it.content())
+            //logger.info(it.content())
         } ?: logger.info("No tags created")
     }
 
