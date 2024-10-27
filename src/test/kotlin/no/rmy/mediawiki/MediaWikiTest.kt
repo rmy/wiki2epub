@@ -1,10 +1,9 @@
 package no.rmy.mediawiki
 
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import no.rmy.book.Book
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
 
 class MediaWikiTest : FunSpec({
     val logger = LoggerFactory.getLogger(this::class.java)
