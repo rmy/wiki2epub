@@ -22,6 +22,14 @@ class BkParagraph(parent: BkPassage?): BkParent(parent) {
                 }
             }
 
+            "rettelse" -> {
+                BkRettelse(this).also {
+                    it.append(tag)
+                    children.add(it)
+                }
+            }
+
+
             else -> {
                 val txt = children.lastOrNull() as? BkText ?: BkText(this).also {
                     children.add(it)
