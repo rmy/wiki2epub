@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+<ncx version="2005-1" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+  <head>
+    <meta name="dtb:UUID" content="3b65f705-36a7-4909-abe0-6d122241a296" />
+    <meta name="dtb:generator" content="EPUB4J v4.2.1.29" />
+    <meta name="dtb:depth" content="1" />
+    <meta name="dtb:totalPageCount" content="0" />
+    <meta name="dtb:maxPageNumber" content="0" />
+  </head>
+  <docTitle>
+    <text>Iliaden</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="navPoint-1" playOrder="1" class="chapter">
+      <navLabel>
+        <text>FORORD.</text>
+      </navLabel>
+      <content src="chapter_1.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-2" playOrder="2" class="chapter">
+      <navLabel>
+        <text>FØRSTE SANG. - VREDEN. PESTEN.</text>
+      </navLabel>
+      <content src="chapter_2.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-3" playOrder="3" class="chapter">
+      <navLabel>
+        <text>ANDEN SANG. - DRØMMEN. OPREGNING AV SKIBENE.</text>
+      </navLabel>
+      <content src="chapter_3.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-4" playOrder="4" class="chapter">
+      <navLabel>
+        <text>TREDJE SANG. - EDSPAKTEN. UTSIGTEN FRA MUREN. TVEKAMPEN MELLEM ALEKSANDROS OG MENELAOS.</text>
+      </navLabel>
+      <content src="chapter_4.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-5" playOrder="5" class="chapter">
+      <navLabel>
+        <text>FJERDE SANG. - PAKTEN BLIR BRUTT. AGAMEMNON MØNSTRER HÆREN.</text>
+      </navLabel>
+      <content src="chapter_5.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-6" playOrder="6" class="chapter">
+      <navLabel>
+        <text>FEMTE SANG. - DIOMEDES' HELTEGJERNINGER.</text>
+      </navLabel>
+      <content src="chapter_6.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-7" playOrder="7" class="chapter">
+      <navLabel>
+        <text>SJETTE SANG. - MØTET MELLEM HEKTOR OG ANDROMAKE.</text>
+      </navLabel>
+      <content src="chapter_7.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-8" playOrder="8" class="chapter">
+      <navLabel>
+        <text>SYVENDE SANG. - TVEKAMPEN MELLEM HEKTOR OG AIAS. DE FALDNE BLIR JORDET.</text>
+      </navLabel>
+      <content src="chapter_8.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-9" playOrder="9" class="chapter">
+      <navLabel>
+        <text>OTTENDE SANG. - DEN AVBRUTTE KAMP.</text>
+      </navLabel>
+      <content src="chapter_9.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-10" playOrder="10" class="chapter">
+      <navLabel>
+        <text>NIENDE SANG. - SENDEFÆRDEN TIL AKILLEVS. BØNFALDELSEN.</text>
+      </navLabel>
+      <content src="chapter_10.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-11" playOrder="11" class="chapter">
+      <navLabel>
+        <text>TIENDE SANG. - SANGEN OM DOLON.</text>
+      </navLabel>
+      <content src="chapter_11.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-12" playOrder="12" class="chapter">
+      <navLabel>
+        <text>ELLEVTE SANG. - AGAMEMNONS HELTEGJERNINGER.</text>
+      </navLabel>
+      <content src="chapter_12.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-13" playOrder="13" class="chapter">
+      <navLabel>
+        <text>ELLEVTE SANG. - AGAMEMNONS HELTEGJERNINGER.</text>
+      </navLabel>
+      <content src="chapter_13.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-14" playOrder="14" class="chapter">
+      <navLabel>
+        <text>TOLVTE SANG. - KAMPEN OM MUREN.</text>
+      </navLabel>
+      <content src="chapter_14.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-15" playOrder="15" class="chapter">
+      <navLabel>
+        <text>TRETTENDE SANG. - KAMPEN OM SKIBENE.</text>
+      </navLabel>
+      <content src="chapter_15.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-16" playOrder="16" class="chapter">
+      <navLabel>
+        <text>FJORTENDE SANG. - ZEVS BLIR DAARET.</text>
+      </navLabel>
+      <content src="chapter_16.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-17" playOrder="17" class="chapter">
+      <navLabel>
+        <text>FEMTENDE SANG. - TROERNE DRIVES BORT FRA SKIBENE.</text>
+      </navLabel>
+      <content src="chapter_17.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-18" playOrder="18" class="chapter">
+      <navLabel>
+        <text>SYTTENDE SANG. - MENELAOS’ HELTEGJERNINGER.</text>
+      </navLabel>
+      <content src="chapter_18.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-19" playOrder="19" class="chapter">
+      <navLabel>
+        <text>ATTENDE SANG. - VAABNENE SMIES.</text>
+      </navLabel>
+      <content src="chapter_19.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-20" playOrder="20" class="chapter">
+      <navLabel>
+        <text>NITTENDE SANG. - AKILLEVS OPGIR SIN VREDE.</text>
+      </navLabel>
+      <content src="chapter_20.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-21" playOrder="21" class="chapter">
+      <navLabel>
+        <text>TYVENDE SANG. - GUDERNES KAMP.</text>
+      </navLabel>
+      <content src="chapter_21.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-22" playOrder="22" class="chapter">
+      <navLabel>
+        <text>EN OG TYVENDE SANG. - KAMPEN VED ELVEN.</text>
+      </navLabel>
+      <content src="chapter_22.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-23" playOrder="23" class="chapter">
+      <navLabel>
+        <text>TO OG TYVENDE SANG. - HEKTORS FALD.</text>
+      </navLabel>
+      <content src="chapter_23.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-24" playOrder="24" class="chapter">
+      <navLabel>
+        <text>TRE OG TYVENDE SANG. - KAMPLEKENE TIL ÆRE FOR PATROKLOS.</text>
+      </navLabel>
+      <content src="chapter_24.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-25" playOrder="25" class="chapter">
+      <navLabel>
+        <text>FIRE OG TYVENDE SANG. - HEKTORS UTLØSNING.</text>
+      </navLabel>
+      <content src="chapter_25.xhtml" />
+    </navPoint>
+  </navMap>
+</ncx>

@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no' ?>
+<opf:package version="2.0" unique-identifier="BookId" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <opf:metadata>
+    <dc:identifier id="BookId" opf:scheme="UUID">3b65f705-36a7-4909-abe0-6d122241a296</dc:identifier>
+    <dc:title>Iliaden</dc:title>
+    <dc:publisher>H. ASCHEHOUG &amp; CO. (W. NYGAARD)</dc:publisher>
+    <dc:contributor opf:role="aut" opf:file-as="Homer, "> Homer</dc:contributor>
+    <dc:contributor opf:role="aut" opf:file-as="Østbye (oversetter), Peder">Peder Østbye (oversetter)</dc:contributor>
+    <dc:contributor opf:role="aut" opf:file-as="Tvede (digital utgave), Øystein">Øystein Tvede (digital utgave)</dc:contributor>
+    <dc:language>en</dc:language>
+    <opf:meta name="cover" content="image_1" />
+    <opf:meta name="generator" content="EPUB4J v4.2.1.29" />
+  </opf:metadata>
+  <opf:manifest>
+    <opf:item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+    <opf:item id="image_1" href="iliaden_cover.jpg" media-type="image/jpeg" />
+    <opf:item id="item_1" href="styles.css" media-type="text/css" />
+    <opf:item id="item_10" href="chapter_7.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_11" href="chapter_8.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_12" href="chapter_9.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_13" href="chapter_10.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_14" href="chapter_11.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_15" href="chapter_12.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_16" href="chapter_13.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_17" href="chapter_14.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_18" href="chapter_15.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_19" href="chapter_16.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_2" href="innledning.css" media-type="text/css" />
+    <opf:item id="item_20" href="chapter_17.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_21" href="chapter_18.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_22" href="chapter_19.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_23" href="chapter_20.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_24" href="chapter_21.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_25" href="chapter_22.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_26" href="chapter_23.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_27" href="chapter_24.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_28" href="chapter_25.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_3" href="tittelside.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_4" href="chapter_1.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_5" href="chapter_2.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_6" href="chapter_3.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_7" href="chapter_4.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_8" href="chapter_5.xhtml" media-type="application/xhtml+xml" />
+    <opf:item id="item_9" href="chapter_6.xhtml" media-type="application/xhtml+xml" />
+  </opf:manifest>
+  <opf:spine toc="ncx">
+    <opf:itemref idref="item_3" />
+    <opf:itemref idref="item_4" />
+    <opf:itemref idref="item_5" />
+    <opf:itemref idref="item_6" />
+    <opf:itemref idref="item_7" />
+    <opf:itemref idref="item_8" />
+    <opf:itemref idref="item_9" />
+    <opf:itemref idref="item_10" />
+    <opf:itemref idref="item_11" />
+    <opf:itemref idref="item_12" />
+    <opf:itemref idref="item_13" />
+    <opf:itemref idref="item_14" />
+    <opf:itemref idref="item_15" />
+    <opf:itemref idref="item_16" />
+    <opf:itemref idref="item_17" />
+    <opf:itemref idref="item_18" />
+    <opf:itemref idref="item_19" />
+    <opf:itemref idref="item_20" />
+    <opf:itemref idref="item_21" />
+    <opf:itemref idref="item_22" />
+    <opf:itemref idref="item_23" />
+    <opf:itemref idref="item_24" />
+    <opf:itemref idref="item_25" />
+    <opf:itemref idref="item_26" />
+    <opf:itemref idref="item_27" />
+    <opf:itemref idref="item_28" />
+  </opf:spine>
+  <opf:guide />
+</opf:package>

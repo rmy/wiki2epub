@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="uid">
+	<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<dc:identifier id="uid">e795acea-b803-4227-a58b-20927eb41f47</dc:identifier>
+		<dc:title>Iliaden</dc:title>
+		<dc:language>nb-NO</dc:language>
+		<meta property="dcterms:modified">2024-12-13T10:42:08Z</meta>
+		<dc:creator>Homer</dc:creator>
+		<dc:publisher>H. ASCHEHOUG &amp; CO. (W. NYGAARD)</dc:publisher>
+		<meta name="cover" content="uid-e795acea-b803-4227-a58b-20927eb41f47_1" />
+	</metadata>
+	<manifest>
+		<item href="toc.xhtml" id="toc" media-type="application/xhtml+xml" properties="nav" />
+		<item href="images/cover.jpg" id="uid-e795acea-b803-4227-a58b-20927eb41f47_1" media-type="image/jpeg" properties="cover-image" />
+		<item href="styles.css" id="uid-e795acea-b803-4227-a58b-20927eb41f47_2" media-type="text/css" />
+		<item href="innledning.css" id="uid-e795acea-b803-4227-a58b-20927eb41f47_3" media-type="text/css" />
+		<item href="omslag.xhtml" id="omslag" media-type="application/xhtml+xml" />
+		<item href="kolofon.xhtml" id="kolofon" media-type="application/xhtml+xml" />
+		<item href="chapter_1.xhtml" id="chapter_1" media-type="application/xhtml+xml" />
+		<item href="chapter_2.xhtml" id="chapter_2" media-type="application/xhtml+xml" />
+		<item href="chapter_3.xhtml" id="chapter_3" media-type="application/xhtml+xml" />
+		<item href="chapter_4.xhtml" id="chapter_4" media-type="application/xhtml+xml" />
+		<item href="chapter_5.xhtml" id="chapter_5" media-type="application/xhtml+xml" />
+		<item href="chapter_6.xhtml" id="chapter_6" media-type="application/xhtml+xml" />
+		<item href="chapter_7.xhtml" id="chapter_7" media-type="application/xhtml+xml" />
+		<item href="chapter_8.xhtml" id="chapter_8" media-type="application/xhtml+xml" />
+		<item href="chapter_9.xhtml" id="chapter_9" media-type="application/xhtml+xml" />
+		<item href="chapter_10.xhtml" id="chapter_10" media-type="application/xhtml+xml" />
+		<item href="chapter_11.xhtml" id="chapter_11" media-type="application/xhtml+xml" />
+		<item href="chapter_12.xhtml" id="chapter_12" media-type="application/xhtml+xml" />
+		<item href="chapter_13.xhtml" id="chapter_13" media-type="application/xhtml+xml" />
+		<item href="chapter_14.xhtml" id="chapter_14" media-type="application/xhtml+xml" />
+		<item href="chapter_15.xhtml" id="chapter_15" media-type="application/xhtml+xml" />
+		<item href="chapter_16.xhtml" id="chapter_16" media-type="application/xhtml+xml" />
+		<item href="chapter_17.xhtml" id="chapter_17" media-type="application/xhtml+xml" />
+		<item href="chapter_18.xhtml" id="chapter_18" media-type="application/xhtml+xml" />
+		<item href="chapter_19.xhtml" id="chapter_19" media-type="application/xhtml+xml" />
+		<item href="chapter_20.xhtml" id="chapter_20" media-type="application/xhtml+xml" />
+		<item href="chapter_21.xhtml" id="chapter_21" media-type="application/xhtml+xml" />
+		<item href="chapter_22.xhtml" id="chapter_22" media-type="application/xhtml+xml" />
+		<item href="chapter_23.xhtml" id="chapter_23" media-type="application/xhtml+xml" />
+		<item href="chapter_24.xhtml" id="chapter_24" media-type="application/xhtml+xml" />
+		<item href="chapter_25.xhtml" id="chapter_25" media-type="application/xhtml+xml" />
+	</manifest>
+	<spine>
+		<itemref idref="toc" />
+		<itemref idref="omslag" />
+		<itemref idref="kolofon" />
+		<itemref idref="chapter_1" />
+		<itemref idref="chapter_2" />
+		<itemref idref="chapter_3" />
+		<itemref idref="chapter_4" />
+		<itemref idref="chapter_5" />
+		<itemref idref="chapter_6" />
+		<itemref idref="chapter_7" />
+		<itemref idref="chapter_8" />
+		<itemref idref="chapter_9" />
+		<itemref idref="chapter_10" />
+		<itemref idref="chapter_11" />
+		<itemref idref="chapter_12" />
+		<itemref idref="chapter_13" />
+		<itemref idref="chapter_14" />
+		<itemref idref="chapter_15" />
+		<itemref idref="chapter_16" />
+		<itemref idref="chapter_17" />
+		<itemref idref="chapter_18" />
+		<itemref idref="chapter_19" />
+		<itemref idref="chapter_20" />
+		<itemref idref="chapter_21" />
+		<itemref idref="chapter_22" />
+		<itemref idref="chapter_23" />
+		<itemref idref="chapter_24" />
+		<itemref idref="chapter_25" />
+	</spine>
+</package>
