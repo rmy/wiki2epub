@@ -64,10 +64,10 @@ object Epub2Maker {
 
         val ebookWriter = EpubWriter()
         when (Mode.current) {
-            Mode.EPUB2 -> "iliaden.epub"
-            Mode.EPUB3 -> "iliaden_epub3.epub"
+            Mode.EPUB2 -> "iliaden_epub2.epub"
+            Mode.EPUB3 -> "iliaden.epub"
         }.let {
-            ebookWriter.write(ebook, FileOutputStream("files/$it"))
+            ebookWriter.write(ebook, FileOutputStream("docs/download/$it"))
         }
 
     }

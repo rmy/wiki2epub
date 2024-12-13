@@ -107,10 +107,10 @@ object Epub3Maker {
             book.setLandmarks(landmarks)
 
             when (Mode.current) {
-                Mode.EPUB2 -> "iliaden.epub"
-                Mode.EPUB3 -> "iliaden_epub3.epub"
+                Mode.EPUB2 -> "iliaden_epub2.epub"
+                Mode.EPUB3 -> "iliaden.epub"
             }.let {
-                book.writeToFile("files/$it")
+                book.writeToFile("docs/download/$it")
             }
         }
     }
