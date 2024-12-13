@@ -5,6 +5,6 @@ cd $SCRIPT_DIR/..
 
 rm -rf files
 gradle run
-epubcheck docs/download/iliaden.epub && git commit -a -m updated && git push
+bin/epubcheck docs/download/iliaden.epub && git commit -a -m updated && git push
 
 
