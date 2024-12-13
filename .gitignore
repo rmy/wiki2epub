@@ -46,6 +46,7 @@ bin/
 .idea
 files
 *.old
+*.old?
 .kotlin
 
 logs
