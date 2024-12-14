@@ -32,7 +32,6 @@ fun main() = runBlocking {
         Chapter.create(149, 168),
         Chapter.create(169, 184),
         Chapter.create(185, 207),
-        Chapter.create(185, 207),
         Chapter.create(208, 220),
         Chapter.create(221, 243),
         Chapter.create(244, 258),
