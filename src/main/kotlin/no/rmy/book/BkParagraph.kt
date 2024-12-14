@@ -4,7 +4,6 @@ import no.rmy.mediawiki.MwParent
 import no.rmy.mediawiki.MwTag
 
 class BkParagraph(parent: BkPassage?): BkParent(parent) {
-
     override fun append(tag: MwTag) {
         when(tag.name) {
             "text" -> {

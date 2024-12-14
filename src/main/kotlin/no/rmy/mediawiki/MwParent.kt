@@ -44,7 +44,7 @@ class MwParent(override val parent: MwTag?) : MwTag {
                         }
                         valueStart = offset
 
-                        MwParent(this).let {
+                        MwParent(this).also {
                             offset += it.parse(text.substring(valueStart))
                             children.add(it)
                             valueStart = offset
