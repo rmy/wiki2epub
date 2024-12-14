@@ -124,7 +124,7 @@ ${body}
                     val result = httpClient.request {
                         url(pageUrl)
                     }
-                    delay(500)
+                    delay(3500)
 
                     val string = result.bodyAsText()
                     val source =
